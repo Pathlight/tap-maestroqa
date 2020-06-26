@@ -1,0 +1,21 @@
+{
+    "type": "object",
+    "properties": 
+        {
+            "agent_email": {"type": "string"},
+            "agent_id": {"type": "string"},
+            "agent_name": {"type": "string"},
+            "comment": {"type": "string"},
+            "date_first_graded": {"type": "string"},
+            "date_first_started": {"type": "string"},
+            "date_graded": {"type": "string"},
+            "gradable_id": {"type": "string"},
+            "grade_type": {"type": "string"},
+            "grader": {"type": "string"},
+            "max_rubric_score": {"type": "string"},
+            "rubric_id": {"type": "string"},
+            "rubric_name": {"type": "string"},
+            "rubric_score": {"type": "string"},
+            "ticket_created_at": {"type": "string"}
+        },
+}
