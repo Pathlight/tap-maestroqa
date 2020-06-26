@@ -1,14 +1,63 @@
-#!/usr/bin/env python3
-import os
+import codecs  # to help with byte vs str issues in the csv download
+import csv
 import json
+import os
+import requests
 import singer
+from contextlib import closing
 from singer import utils, metadata
 from singer.catalog import Catalog, CatalogEntry
 from singer.schema import Schema
 
 
-REQUIRED_CONFIG_KEYS = ["start_date", "username", "password"]
+REQUIRED_CONFIG_KEYS = ['api_key']
+STATE = {}
 LOGGER = singer.get_logger()
+
+
+def write_schema_from_header(entity, header, keys):
+    schema = {
+        "type": "object",
+        "properties": {}
+    }
+    header_map = []
+    for column in header:
+        # for now everything is a string; ideas for later:
+        # 1. intelligently detect data types based on a sampling of entries from the raw data
+        # 2. by default everything is a string, but allow entries in config.json to hard-type columns by name
+        schema["properties"][column] = {"type": "string"}
+        header_map.append(column)
+
+    singer.write_schema(
+        stream_name=entity,
+        schema=schema,
+        key_properties=keys,
+    )
+
+    return header_map
+
+
+def sync_file(file_url, file_type):
+
+    LOGGER.info("Syncing CSV file")
+
+    # read data from csv url (from https://stackoverflow.com/a/38677650)
+    with closing(requests.get(file_url, stream=True)) as r:
+        reader = csv.DictReader(codecs.iterdecode(r.iter_lines(), 'utf-8'), delimiter=',', quotechar='"')
+        keys = None
+        if file_type == 'total_scores':
+            keys = 'gradable_id'
+        else:
+            # section_scores has no unique id per row
+            # todo: possibly combine gradable id + section_id to create one
+            pass
+        write_schema_from_header(file_type, reader.fieldnames, keys)
+        for row in reader:
+            record = {}
+            for key, value in row.items():
+                record[key] = value
+            if len(record) > 0:  # skip empty lines
+                singer.write_record(file_type, record)
 
 
 def get_abs_path(path):

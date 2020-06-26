@@ -1,5 +1,10 @@
+import csv
+import codecs  # in order to solve byte vs str issue
 import requests
 import singer
+
+from contextlib import closing
+
 
 LOGGER = singer.get_logger()
 
@@ -34,3 +39,9 @@ class MaestroQAAPI:
         resp = requests.get(url, json=params, headers=self.headers)
 
         return resp.json()
+
+
+# from https://stackoverflow.com/a/38677650
+
+    for row in reader:
+        print(row)
