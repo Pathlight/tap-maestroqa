@@ -1,9 +1,6 @@
-import csv
-import codecs  # in order to solve byte vs str issue
 import requests
 import singer
-
-from contextlib import closing
+import time
 
 
 LOGGER = singer.get_logger()
@@ -15,33 +12,37 @@ class MaestroQAAPI:
     MAX_POST_ATTEMPTS = 10
 
     def __init__(self, config):
-        self.api_key = config['api_key']
-        self.headers = {'apiToken': config['api_key']}
+        self.headers = {'apiToken': config['api_token']}
 
     # POST request kicks off a raw export
-    def post(self, url, params=None):
-        if not url.startswith('http://'):
-            url = f'{self.BASE_URL}/{url}'
+    def post(self, params):
+        url = f'{self.BASE_URL}/request-raw-export'
 
-        LOGGER.info(f'Maestro POST {url}')
+        LOGGER.info(f'MaestroQA POST request to request export {url}')
 
         resp = requests.post(url, json=params, headers=self.headers)
 
         return resp.json()
 
     # GET request retrieves the results of the export
-    def get(self, url, params=None):
-        if not url.startswith('http://'):
-            url = f'{self.BASE_URL}/{url}'
+    def get(self, params):
+        url = f'{self.BASE_URL}/get-export-data'
 
-        LOGGER.info(f'Maestro GET {url}')
+        LOGGER.info(f'MaestroQA GET request to retrieve exxport {url}')
 
-        resp = requests.get(url, json=params, headers=self.headers)
+        for num_retries in range(self.MAX_GET_ATTEMPTS):
+            will_retry = num_retries < self.MAX_GET_ATTEMPTS - 1
 
+            # TO DO: figure out if/when/what errors we received, try & except
+            resp = requests.get(url, json=params, headers=self.headers)
+
+            result = resp.json()
+
+            if result['status'] == 'complete':
+                break
+
+            elif resp['status'] in ['requested', 'in_progress'] and will_retry:
+                time.sleep(10)
+
+        resp.raise_for_status()
         return resp.json()
-
-
-# from https://stackoverflow.com/a/38677650
-
-    for row in reader:
-        print(row)
