@@ -37,12 +37,14 @@ def discover():
     streams = []
     for stream_id, schema in raw_schemas.items():
         # TODO: populate any metadata and stream's key properties here..
-        stream_metadata = []
         key_properties = None
-        if stream_id == 'total_scores':
-            key_properties = ['gradable_id']
-        elif stream_id == 'section_scores':
-            key_properties = ['gradeabe_id', 'section_id']
+        key_properties = ['gradeabe_id']  # TODO: figure out additional key props for section_scores
+        stream_metadata = metadata.get_standard_metadata(
+            schema=schema.to_dict(),
+            key_properties=key_properties,
+            valid_replication_keys='date_graded',
+            replication_method=None
+        )
         streams.append(
             CatalogEntry(
                 tap_stream_id=stream_id,

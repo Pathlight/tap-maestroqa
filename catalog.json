@@ -4,7 +4,7 @@
       "tap_stream_id": "total_scores",
       "replication_key": "date_graded",
       "key_properties": [
-        "gradable_id"
+        "gradeabe_id"
       ],
       "schema": {
         "properties": {
@@ -18,7 +18,10 @@
             "type": "string"
           },
           "comment": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "date_first_graded": {
             "type": "string"
@@ -54,13 +57,344 @@
             "type": "string"
           }
         },
-        "type": "object"
+        "type": "object",
+        "additionalProperties": "false"
       },
       "stream": "total_scores",
       "metadata": [
-        {"metadata": {
-          "selected": true}, 
-          "breadcrumb": []
+        {
+          "breadcrumb": [],
+          "metadata": {
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "agent_email"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "agent_id"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "agent_name"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "comment"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "date_first_graded"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "date_first_started"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "date_graded"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "gradable_id"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "grade_type"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "grader"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "max_rubric_score"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "rubric_id"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "rubric_name"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "rubric_score"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "ticket_created_at"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        }
+      ]
+    },
+    {
+      "tap_stream_id": "section_scores",
+      "replication_key": "date_graded",
+      "key_properties": [
+        "gradeabe_id"
+      ],
+      "schema": {
+        "properties": {
+          "agent_email": {
+            "type": "string"
+          },
+          "agent_id": {
+            "type": "string"
+          },
+          "agent_name": {
+            "type": "string"
+          },
+          "date_graded": {
+            "type": "string"
+          },
+          "gradable_id": {
+            "type": "string"
+          },
+          "grade_type": {
+            "type": "string"
+          },
+          "grader": {
+            "type": "string"
+          },
+          "max_section_score": {
+            "type": "string"
+          },
+          "rubric_id": {
+            "type": "string"
+          },
+          "rubric_name": {
+            "type": "string"
+          },
+          "section_id": {
+            "type": "string"
+          },
+          "section_name": {
+            "type": "string"
+          },
+          "section_score": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ticket_created_at": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "additionalProperties": "false"
+      },
+      "stream": "section_scores",
+      "metadata": [
+        {
+          "breadcrumb": [],
+          "metadata": {
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "agent_email"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "agent_id"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "agent_name"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "date_graded"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "gradable_id"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "grade_type"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "grader"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "max_section_score"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "rubric_id"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "rubric_name"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "section_id"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "section_name"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "section_score"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "ticket_created_at"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
         }
       ]
     }

@@ -37,14 +37,16 @@ def get_file(client, stream, state=None):
     # ex. 2017-12-13T05:00:00Z
 
     # make a post request (start date from state, end date is current time)
+    stream = stream.to_dict()
     params = {
         'startDate': '2020-06-24T00:00:00Z',  # TODO: replace with date from state
         'endDate': '2020-06-25T00:00:00Z',  # TODO: replace with now as string?
         # 'name': '',
-        'singleFileExport': stream,
+        'singleFileExport': stream['tap_stream_id'],
     }
 
     export_id = client.post(params)
+    LOGGER.info("Successfully made get request")
 
     # wait for the export to complete
     time.sleep(10)  # TODO: make this smarter
@@ -59,14 +61,17 @@ def process_file(stream, file_url):
 
     # read data from csv url (from https://stackoverflow.com/a/38677650)
     with closing(requests.get(file_url, stream=True)) as r:
-        reader = csv.DictReader(codecs.iterdecode(r.iter_lines(), 'utf-8'), delimiter=',', quotechar='"')
+        reader = csv.DictReader(
+            codecs.iterdecode(r.iter_lines(), 'utf-8'),
+            delimiter=',',
+            quotechar='"')
         keys = None
         if stream == 'total_scores':
             keys = 'gradable_id'
-        else:
+        elif stream == 'section_scores':
             # section_scores has no unique id per row
             # todo: possibly combine gradable id + section_id to create one
-            pass
+            keys = ['gradable_id', 'section_id']
         write_schema_from_header(stream, reader.fieldnames, keys)
         bookmark = '2020-06-24T00:00:00Z'  # TODO: replace with state
         for row in reader:
@@ -87,6 +92,6 @@ def sync(config, state, catalog):
     # loop over selected streams in catalog
     for stream in catalog.get_selected_streams(state):
         LOGGER.info(f'Syncing stream {stream.tap_stream_id}')
-        if stream.tap_stream_id == 'total_scores':
-            file_url = get_file(client, stream, state)
-            process_file(stream, file_url)
+        file_url = get_file(client, stream, state)
+        LOGGER.info('Retrieved')
+        process_file(stream, file_url)
