@@ -57,7 +57,10 @@ def get_file(client, stream, state=None):
 
 
 def process_file(stream, file_url):
+    LOGGER.info(f'FILE URL: {file_url}')
     LOGGER.info("Syncing CSV file")
+
+    stream = stream.to_dict()
 
     # read data from csv url (from https://stackoverflow.com/a/38677650)
     with closing(requests.get(file_url, stream=True)) as r:
@@ -65,14 +68,16 @@ def process_file(stream, file_url):
             codecs.iterdecode(r.iter_lines(), 'utf-8'),
             delimiter=',',
             quotechar='"')
+        LOGGER.info('Created csv dictreader')
         keys = None
-        if stream == 'total_scores':
+        if stream['tap_stream_id'] == 'total_scores':
             keys = 'gradable_id'
-        elif stream == 'section_scores':
+        elif stream['tap_stream_id'] == 'section_scores':
             # section_scores has no unique id per row
             # todo: possibly combine gradable id + section_id to create one
             keys = ['gradable_id', 'section_id']
         write_schema_from_header(stream, reader.fieldnames, keys)
+        LOGGER.info('Schema written')
         bookmark = '2020-06-24T00:00:00Z'  # TODO: replace with state
         for row in reader:
             record = {}
@@ -82,7 +87,7 @@ def process_file(stream, file_url):
                 singer.write_record(stream, record)
                 if row['date_graded'] > bookmark:
                     bookmark = row['date_graded']
-                    singer.write_state({stream: bookmark})
+                    singer.write_state({stream['tap_stream_id']: bookmark})
 
 
 def sync(config, state, catalog):

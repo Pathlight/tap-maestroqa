@@ -45,7 +45,7 @@ class MaestroQAAPI:
             if result['status'] == 'complete':
                 break
 
-            elif resp['status'] in ['requested', 'in_progress'] and will_retry:
+            elif result['status'] in ['requested', 'in_progress'] and will_retry:
                 time.sleep(10)
 
         resp.raise_for_status()
