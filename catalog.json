@@ -4,7 +4,7 @@
       "tap_stream_id": "total_scores",
       "replication_key": "date_graded",
       "key_properties": [
-        "gradeabe_id"
+        "gradable_id"
       ],
       "schema": {
         "properties": {
@@ -65,6 +65,11 @@
         {
           "breadcrumb": [],
           "metadata": {
+            "table-key-properties": [
+              "gradable_id"
+            ],
+            "valid-replication-keys": "date_graded",
+            "inclusion": "available",
             "selected": true
           }
         },
@@ -137,7 +142,7 @@
             "gradable_id"
           ],
           "metadata": {
-            "inclusion": "available"
+            "inclusion": "automatic"
           }
         },
         {
@@ -209,7 +214,8 @@
       "tap_stream_id": "section_scores",
       "replication_key": "date_graded",
       "key_properties": [
-        "gradeabe_id"
+        "gradable_id",
+        "section_id"
       ],
       "schema": {
         "properties": {
@@ -223,7 +229,7 @@
             "type": "string"
           },
           "date_graded": {
-            "type": "string"
+            "type": "date-time"
           },
           "gradable_id": {
             "type": "string"
@@ -235,7 +241,7 @@
             "type": "string"
           },
           "max_section_score": {
-            "type": "string"
+            "type": "integer"
           },
           "rubric_id": {
             "type": "string"
@@ -252,11 +258,11 @@
           "section_score": {
             "type": [
               "null",
-              "string"
+              "integer"
             ]
           },
           "ticket_created_at": {
-            "type": "string"
+            "type": "date-time"
           }
         },
         "type": "object",
@@ -267,6 +273,12 @@
         {
           "breadcrumb": [],
           "metadata": {
+            "table-key-properties": [
+              "gradable_id",
+              "section_id"
+            ],
+            "valid-replication-keys": "date_graded",
+            "inclusion": "available",
             "selected": true
           }
         },
@@ -312,7 +324,7 @@
             "gradable_id"
           ],
           "metadata": {
-            "inclusion": "available"
+            "inclusion": "automatic"
           }
         },
         {
@@ -366,7 +378,7 @@
             "section_id"
           ],
           "metadata": {
-            "inclusion": "available"
+            "inclusion": "automatic"
           }
         },
         {
