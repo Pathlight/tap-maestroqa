@@ -17,5 +17,6 @@
         "rubric_score": {"type": "string"},
         "ticket_created_at": {"type": "string"}
     },
-    "additionalProperties": "false"
+    "additionalProperties": "false",
+    "bookmark_properties": ["date_graded"]
 }

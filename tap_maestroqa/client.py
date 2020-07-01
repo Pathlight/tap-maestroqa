@@ -6,7 +6,7 @@ import time
 LOGGER = singer.get_logger()
 
 
-class MaestroQAAPI:
+class MaestroAPI:
     BASE_URL = 'https://app.maestroqa.com/api/v1'
     MAX_GET_ATTEMPTS = 10
     MAX_POST_ATTEMPTS = 10

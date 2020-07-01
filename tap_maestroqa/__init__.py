@@ -36,9 +36,9 @@ def discover():
     raw_schemas = load_schemas()
     streams = []
     for stream_id, schema in raw_schemas.items():
-        # TODO: populate any metadata and stream's key properties here..
-        key_properties = None
-        key_properties = ['gradeabe_id']  # TODO: figure out additional key props for section_scores
+        key_properties = ['gradable_id']
+        if stream_id == 'section_scores':
+            key_properties.append('section_id')
         stream_metadata = metadata.get_standard_metadata(
             schema=schema.to_dict(),
             key_properties=key_properties,
