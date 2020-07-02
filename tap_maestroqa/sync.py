@@ -14,26 +14,6 @@ LOGGER = singer.get_logger()
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 
-def write_schema_from_header(entity, header, keys):
-    schema = {
-        "type": "object",
-        "properties": {}
-    }
-    header_map = []
-    for column in header:
-        # for now everything is a string; ideas for later:
-        # 1. intelligently detect data types based on a sampling of entries from the raw data
-        # 2. by default everything is a string, but allow entries in config.json to hard-type columns by name
-        schema["properties"][column] = {"type": "string"}
-        header_map.append(column)
-
-    singer.write_schema(
-        stream_name=entity,
-        schema=schema,
-        key_properties=keys,
-    )
-
-
 def transform_date(datestr):
     if datestr.startswith('='):
         date_obj = datetime.datetime.strptime(datestr, '="%Y-%m-%d %H:%M:%S.%f"').replace(tzinfo=pytz.UTC)
@@ -47,26 +27,19 @@ def transform_date(datestr):
 def get_file(client, stream, state=None):
 
     # UNCOMMENT WHEN DONE TESTING
-    # end_date = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
-    # params = {
-    #     'startDate': state['bookmarks'][stream_id]['date_graded'],
-    #     'endDate': end_date,  # TODO: replace with now as string?
-    #     # 'name': '',
-    #     'singleFileExport': stream['tap_stream_id'],
-    # }
-
+    end_date = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
     params = {
-        'startDate': "2020-06-25T00:00:00Z",  # TODO: replace with date from state
-        'endDate': "2020-06-26T00:00:00Z",  # TODO: replace with now as string?
-        # 'name': '',
+        'startDate': state['bookmarks'][stream.tap_stream_id]['date_graded'],
+        'endDate': end_date,  # TODO: replace with now as string?
+        'name': f'{stream.tap_stream_id} thru {end_date}',
         'singleFileExport': stream.tap_stream_id,
     }
 
     # UNCOMMENT WHEN DONE TESTING
-    # export_id = client.post(params)
-    # LOGGER.info(f'{export_id}')
-    # LOGGER.info("Successfully made get request")
-    export_id = {'exportId': 'id_z3A4qrYyYqcC5vMQ9'}
+    export_id = client.post(params)
+    LOGGER.info(f'{export_id}')
+    LOGGER.info("Successfully made get request")
+    # export_id = {'exportId': 'id_z3A4qrYyYqcC5vMQ9'}
 
     # wait for the export to complete
     time.sleep(5)  # TODO: make this smarter
@@ -79,7 +52,7 @@ def get_file(client, stream, state=None):
 def process_file(stream, state, file_url):
     LOGGER.info("Syncing CSV file")
 
-    # read data from csv url (from https://stackoverflow.com/a/38677650)
+    # read data from csv url using a generator (from https://stackoverflow.com/a/38677650)
     with closing(requests.get(file_url, stream=True)) as r:
         reader = csv.DictReader(
             codecs.iterdecode(r.iter_lines(), 'utf-8'),
@@ -90,16 +63,7 @@ def process_file(stream, state, file_url):
         # the csv export doesn't produce a sorted file, so sort here in order
         # to update state in chronological order in case of interruption
         reader = sorted(reader, key=lambda d: d['date_graded'])
-        # keys = None
-        # if stream.tap_stream_id == 'total_scores':
-        #     keys = 'gradable_id'
-        # elif stream.tap_stream_id == 'section_scores':
-        #     # section_scores has no unique id per row
-        #     # todo: possibly combine gradable id + section_id to create one
-        #     keys = ['gradable_id', 'section_id']
-        # write_schema_from_header(stream, reader.fieldnames, keys)
 
-        LOGGER.info(f'\n\nSCHEMA: {stream.schema.to_dict()}\n\n')
         singer.write_schema(
             stream_name=stream.tap_stream_id,
             schema=stream.schema.to_dict(),
@@ -107,9 +71,9 @@ def process_file(stream, state, file_url):
         )
 
         date_fields = set(['date_graded', 'ticket_created_at', 'date_first_started', 'date_first_graded'])
-        # integer_fields = set(['rubric_score', 'max_rubric_score', 'gradable_id', 'agent_id', 'section_score', 'max_section_score'])
-        integer_fields = set(['max_section_score'])
-        bookmark = state['bookmarks'][stream.tap_stream_id]['date_graded']  # TODO: replace with state
+        integer_fields = set(['max_section_score', 'section_score', 'max_rubric_score'])
+        float_fields = set(['rubric_score'])
+        bookmark = state['bookmarks'][stream.tap_stream_id]['date_graded']
         for row in reader:
             record = {}
             for key, value in row.items():
@@ -117,9 +81,11 @@ def process_file(stream, state, file_url):
                     value = transform_date(value)
                 elif key in integer_fields and value:
                     value = int(value)
+                elif key in float_fields:
+                    value = float(value)
+                elif not value:
+                    value = None
                 record[key] = value
-                LOGGER.info(f'\n\nkey[value]: {key}[{value}]')
-                LOGGER.info(f'Type of value = {type(value)}\n\n')
             if len(record) > 0:  # only write records for non-empty lines
                 singer.write_record(stream.tap_stream_id, record)
                 new_bookmark = transform_date(row['date_graded'])

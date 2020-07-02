@@ -1,20 +1,49 @@
 {
-	"type": "object", 
+    "type": "object", 
     "properties": {
-        "agent_email": {"type": "string"},
-        "agent_id": {"type": "string"},
-        "agent_name": {"type": "string"},
-        "date_graded": {"type": "date-time"},
-        "gradable_id": {"type": "string"},
-        "grade_type": {"type": "string"},
-        "grader": {"type": "string"},
-        "max_section_score": {"type": "integer"},
-        "rubric_id": {"type": "string"},
-        "rubric_name": {"type": "string"},
-        "section_id": {"type": "string"},
-        "section_name": {"type": "string"},
-        "section_score": {"type": ["null", "integer"]},
-        "ticket_created_at": {"type": "date-time"}
-    },
-    "additionalProperties": "false"
+        "agent_email": {
+            "type": ["null", "string"]
+        },
+        "agent_id": {
+            "type": ["null", "string"]
+        },
+        "agent_name": {
+            "type": ["null", "string"]
+        },
+        "date_graded": {
+            "type": ["null", "string"],
+            "format": "date-time"
+        },
+        "gradable_id": {
+            "type": "string"
+        },
+        "grade_type": {
+            "type": ["null", "string"]
+        },
+        "grader": {
+            "type": ["null", "string"]
+        },
+        "max_section_score": {
+            "type": ["null", "integer"]
+        },
+        "rubric_id": {
+            "type": ["null", "string"]
+        },
+        "rubric_name": {
+            "type": ["null", "string"]
+        },
+        "section_id": {
+            "type": "string"
+        },
+        "section_name": {
+            "type": ["null", "string"]
+        },
+        "section_score": {
+            "type": ["null", "integer"]
+        },
+        "ticket_created_at": {
+            "type": ["null", "string"],
+            "format": "date-time"
+        }
+    }
 }

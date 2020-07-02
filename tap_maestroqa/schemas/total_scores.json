@@ -1,22 +1,54 @@
 {
     "type": "object",
     "properties": {
-        "agent_email": {"type": "string"},
-        "agent_id": {"type": "string"},
-        "agent_name": {"type": "string"},
-        "comment": {"type": ["null", "string"]},
-        "date_first_graded": {"type": "string"},
-        "date_first_started": {"type": "string"},
-        "date_graded": {"type": "string"},
-        "gradable_id": {"type": "string"},
-        "grade_type": {"type": "string"},
-        "grader": {"type": "string"},
-        "max_rubric_score": {"type": "string"},
-        "rubric_id": {"type": "string"},
-        "rubric_name": {"type": "string"},
-        "rubric_score": {"type": "string"},
-        "ticket_created_at": {"type": "string"}
-    },
-    "additionalProperties": "false",
-    "bookmark_properties": ["date_graded"]
+        "agent_email": {
+            "type": ["null", "string"]
+        },
+        "agent_id": {
+            "type": ["null", "string"]
+        },
+        "agent_name": {
+            "type": ["null", "string"]
+        },
+        "comment": {
+            "type": ["null", "string"]
+        },
+        "date_first_graded": {
+            "type": ["null", "string"],
+            "format": "date-time"
+        },
+        "date_first_started": {
+            "type": ["null", "string"],
+            "format": "date-time"
+        },
+        "date_graded": {
+            "type": ["null", "string"],
+            "format": "date-time"
+        },
+        "gradable_id": {
+            "type": "string"
+        },
+        "grade_type": {
+            "type": ["null", "string"]
+        },
+        "grader": {
+            "type": ["null", "string"]
+        },
+        "max_rubric_score": {
+            "type": ["null", "integer"]
+        },
+        "rubric_id": {
+            "type": ["null", "string"]
+        },
+        "rubric_name": {
+            "type": ["null", "string"]
+        },
+        "rubric_score": {
+            "type": ["null", "number"]
+        },
+        "ticket_created_at": {
+            "type": ["null", "string"],
+            "format": "date-time"
+        }
+    }
 }
