@@ -1,8 +1,5 @@
-
-import csv
 import json
 import os
-import requests
 import singer
 
 from singer import utils, metadata

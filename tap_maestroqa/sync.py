@@ -8,7 +8,7 @@ import requests
 import time
 from contextlib import closing
 from singer.utils import strptime_to_utc, strftime as singer_strftime
-from .client import MaestroAPI
+from .client import MaestroQaAPI
 
 LOGGER = singer.get_logger()
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
@@ -24,6 +24,22 @@ def transform_date(datestr):
     return value
 
 
+def transform_value(key, value):
+    date_fields = set(['date_graded', 'ticket_created_at', 'date_first_started', 'date_first_graded'])
+    integer_fields = set(['max_section_score', 'section_score', 'max_rubric_score'])
+    float_fields = set(['rubric_score'])
+
+    if key in date_fields:
+        value = transform_date(value)
+    elif key in integer_fields and value:
+        value = int(value)
+    elif key in float_fields:
+        value = float(value)
+    elif not value:
+        value = None
+    return value
+
+
 def get_file(client, stream, state=None):
 
     # UNCOMMENT WHEN DONE TESTING
@@ -35,17 +51,12 @@ def get_file(client, stream, state=None):
         'singleFileExport': stream.tap_stream_id,
     }
 
-    # UNCOMMENT WHEN DONE TESTING
     export_id = client.post(params)
-    LOGGER.info(f'{export_id}')
-    LOGGER.info("Successfully made get request")
-    # export_id = {'exportId': 'id_z3A4qrYyYqcC5vMQ9'}
 
     # wait for the export to complete
     time.sleep(5)  # TODO: make this smarter
     export_results = client.get(export_id)
 
-    # get the file
     return export_results['dataUrl']
 
 
@@ -58,7 +69,6 @@ def process_file(stream, state, file_url):
             codecs.iterdecode(r.iter_lines(), 'utf-8'),
             delimiter=',',
             quotechar='"')
-        LOGGER.info('Created csv dictreader')
 
         # the csv export doesn't produce a sorted file, so sort here in order
         # to update state in chronological order in case of interruption
@@ -70,33 +80,23 @@ def process_file(stream, state, file_url):
             key_properties=stream.key_properties,
         )
 
-        date_fields = set(['date_graded', 'ticket_created_at', 'date_first_started', 'date_first_graded'])
-        integer_fields = set(['max_section_score', 'section_score', 'max_rubric_score'])
-        float_fields = set(['rubric_score'])
         bookmark = state['bookmarks'][stream.tap_stream_id]['date_graded']
         for row in reader:
             record = {}
             for key, value in row.items():
-                if key in date_fields:
-                    value = transform_date(value)
-                elif key in integer_fields and value:
-                    value = int(value)
-                elif key in float_fields:
-                    value = float(value)
-                elif not value:
-                    value = None
+                value = transform_value(key, value)
                 record[key] = value
             if len(record) > 0:  # only write records for non-empty lines
                 singer.write_record(stream.tap_stream_id, record)
                 new_bookmark = transform_date(row['date_graded'])
                 if new_bookmark > bookmark:
-                    bookmark = row['date_graded']
+                    bookmark = transform_date(row['date_graded'])
                     singer.write_state({state['bookmarks'][stream.tap_stream_id]['date_graded']: new_bookmark})
 
 
 def sync(config, state, catalog):
     '''Sync data from tap source'''
-    client = MaestroAPI(config)
+    client = MaestroQaAPI(config)
 
     # loop over selected streams in catalog
     for stream in catalog.get_selected_streams(state):

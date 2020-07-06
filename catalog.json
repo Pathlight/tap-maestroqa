@@ -9,13 +9,22 @@
       "schema": {
         "properties": {
           "agent_email": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "agent_id": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "agent_name": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "comment": {
             "type": [
@@ -24,41 +33,74 @@
             ]
           },
           "date_first_graded": {
-            "type": "string"
+            "format": "date-time",
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "date_first_started": {
-            "type": "string"
+            "format": "date-time",
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "date_graded": {
-            "type": "string"
+            "format": "date-time",
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "gradable_id": {
             "type": "string"
           },
           "grade_type": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "grader": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "max_rubric_score": {
-            "type": "string"
+            "type": [
+              "null",
+              "integer"
+            ]
           },
           "rubric_id": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "rubric_name": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "rubric_score": {
-            "type": "string"
+            "type": [
+              "null",
+              "number"
+            ]
           },
           "ticket_created_at": {
-            "type": "string"
+            "format": "date-time",
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
-        "type": "object",
-        "additionalProperties": "false"
+        "type": "object"
       },
       "stream": "total_scores",
       "metadata": [
@@ -220,40 +262,71 @@
       "schema": {
         "properties": {
           "agent_email": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "agent_id": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "agent_name": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "date_graded": {
-            "type": "date-time"
+            "format": "date-time",
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "gradable_id": {
             "type": "string"
           },
           "grade_type": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "grader": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "max_section_score": {
-            "type": "integer"
+            "type": [
+              "null",
+              "integer"
+            ]
           },
           "rubric_id": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "rubric_name": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "section_id": {
             "type": "string"
           },
           "section_name": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "section_score": {
             "type": [
@@ -262,11 +335,14 @@
             ]
           },
           "ticket_created_at": {
-            "type": "date-time"
+            "format": "date-time",
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
-        "type": "object",
-        "additionalProperties": "false"
+        "type": "object"
       },
       "stream": "section_scores",
       "metadata": [
