@@ -35,23 +35,26 @@ def transform_value(key, value):
         try:
             value = int(value)
         except ValueError:
-            pass
+            value = None
     elif key in float_fields:
         try:
             value = float(value)
         except ValueError:
-            pass
+            value = None
     elif not value:
         value = None
     return value
 
 
-def get_file(client, stream, state=None):
+def get_file(client, stream, config, state=None):
 
-    # UNCOMMENT WHEN DONE TESTING
+    if state:
+        start_date = state['bookmarks'][stream.tap_stream_id]['date_graded']
+    else:
+        start_date = config['start_date']
     end_date = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
     params = {
-        'startDate': state['bookmarks'][stream.tap_stream_id]['date_graded'],
+        'startDate': start_date,
         'endDate': end_date,  # TODO: replace with now as string?
         'name': f'{stream.tap_stream_id} thru {end_date}',
         'singleFileExport': stream.tap_stream_id,
@@ -110,6 +113,6 @@ def sync(config, state, catalog):
     # loop over selected streams in catalog
     for stream in catalog.get_selected_streams(state):
         LOGGER.info(f'Syncing stream {stream.tap_stream_id}')
-        file_url = get_file(client, stream, state)
+        file_url = get_file(client, stream, config, state)
         LOGGER.info('Retrieved')
         process_file(stream, state, config, file_url)
