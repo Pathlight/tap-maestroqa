@@ -32,9 +32,15 @@ def transform_value(key, value):
     if key in date_fields:
         value = transform_date(value)
     elif key in integer_fields and value:
-        value = int(value)
+        try:
+            value = int(value)
+        except ValueError:
+            pass
     elif key in float_fields:
-        value = float(value)
+        try:
+            value = float(value)
+        except ValueError:
+            pass
     elif not value:
         value = None
     return value
@@ -54,13 +60,12 @@ def get_file(client, stream, state=None):
     export_id = client.post(params)
 
     # wait for the export to complete
-    time.sleep(5)  # TODO: make this smarter
     export_results = client.get(export_id)
 
     return export_results['dataUrl']
 
 
-def process_file(stream, state, file_url):
+def process_file(stream, state, config, file_url):
     LOGGER.info("Syncing CSV file")
 
     # read data from csv url using a generator (from https://stackoverflow.com/a/38677650)
@@ -80,18 +85,22 @@ def process_file(stream, state, file_url):
             key_properties=stream.key_properties,
         )
 
-        bookmark = state['bookmarks'][stream.tap_stream_id]['date_graded']
+        if state:
+            bookmark = state['bookmarks'][stream.tap_stream_id]['date_graded']
+        else:
+            bookmark = config['start_date']
+
         for row in reader:
             record = {}
             for key, value in row.items():
                 value = transform_value(key, value)
                 record[key] = value
-            if len(record) > 0:  # only write records for non-empty lines
+            if record:  # only write records for non-empty lines
                 singer.write_record(stream.tap_stream_id, record)
                 new_bookmark = transform_date(row['date_graded'])
                 if new_bookmark > bookmark:
-                    bookmark = transform_date(row['date_graded'])
-                    singer.write_state({state['bookmarks'][stream.tap_stream_id]['date_graded']: new_bookmark})
+                    state['bookmarks'][stream.tap_stream_id]['date_graded'] = new_bookmark
+                    singer.write_state(state)
 
 
 def sync(config, state, catalog):
@@ -103,4 +112,4 @@ def sync(config, state, catalog):
         LOGGER.info(f'Syncing stream {stream.tap_stream_id}')
         file_url = get_file(client, stream, state)
         LOGGER.info('Retrieved')
-        process_file(stream, state, file_url)
+        process_file(stream, state, config, file_url)

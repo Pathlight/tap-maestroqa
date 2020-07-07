@@ -41,7 +41,7 @@ class MaestroQaAPI:
                     })
                 elif resp and resp.status_code == 200:
                     break  # No retry needed
-                time.sleep(60)
+                time.sleep(10)
 
         # resp.raise_for_status()
         return resp.json()
@@ -90,7 +90,7 @@ class MaestroQaAPI:
                     break  # no retry needed
                 elif result['status'] == 'completed':
                     break  # no retry needed
-            time.sleep(60)
+            time.sleep(10)
 
         # resp.raise_for_status()
         return result
