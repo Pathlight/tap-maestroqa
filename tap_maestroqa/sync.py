@@ -29,7 +29,9 @@ def transform_value(key, value):
     integer_fields = set(['max_section_score', 'section_score', 'max_rubric_score'])
     float_fields = set(['rubric_score'])
 
-    if key in date_fields:
+    if value == 'Unknown':
+        value = None
+    elif key in date_fields:
         value = transform_date(value)
     elif key in integer_fields and value:
         try:

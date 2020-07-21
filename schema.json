@@ -1,0 +1,158 @@
+{
+  "tables": {
+    "section_scores": {
+      "columns": {
+        "agent_email": {
+          "label": "agent_email",
+          "type": "string"
+        },
+        "agent_id": {
+          "label": "agent_id",
+          "type": "string"
+        },
+        "agent_name": {
+          "label": "agent_name",
+          "type": "string"
+        },
+        "date_graded": {
+          "label": "date_graded",
+          "type": "temporal"
+        },
+        "gradable_id": {
+          "label": "gradable_id",
+          "type": "string",
+          "foreign_key": "total_scores.gradable_id"
+        },
+        "grade_type": {
+          "label": "grade_type",
+          "type": "string"
+        },
+        "grader": {
+          "label": "grader",
+          "type": "string"
+        },
+        "max_section_score": {
+          "label": "max_section_score",
+          "type": "numeric"
+        },
+        "rubric_id": {
+          "label": "rubric_id",
+          "type": "string"
+        },
+        "rubric_name": {
+          "label": "rubric_name",
+          "type": "string"
+        },
+        "section_id": {
+          "label": "section_id",
+          "type": "string"
+        },
+        "section_name": {
+          "label": "section_name",
+          "type": "string"
+        },
+        "section_score": {
+          "label": "section_score",
+          "type": "numeric"
+        },
+        "ticket_created_at": {
+          "label": "ticket_created_at",
+          "type": "temporal"
+        }
+      },
+      "label": "Section Scores",
+      "name": "section_scores",
+      "user_keys": [{"label": "Agent Email", "value": "agent_email"}],
+      "default_fields": [
+        {"field_path": ["gradable_id"]},
+        {"field_path": ["section_name"]},
+        {"field_path": ["section_score"]},
+        {"field_path": ["date_graded"]}
+      ]
+    },
+    "total_scores": {
+      "columns": {
+        "agent_email": {
+          "label": "agent_email",
+          "type": "string"
+        },
+        "agent_id": {
+          "label": "agent_id",
+          "type": "string"
+        },
+        "agent_name": {
+          "label": "agent_name",
+          "type": "string"
+        },
+        "comment": {
+          "label": "comment",
+          "type": "string"
+        },
+        "date_first_graded": {
+          "label": "date_first_graded",
+          "type": "temporal"
+        },
+        "date_first_started": {
+          "label": "date_first_started",
+          "type": "temporal"
+        },
+        "date_graded": {
+          "label": "date_graded",
+          "type": "temporal"
+        },
+        "gradable_id": {
+          "label": "gradable_id",
+          "type": "string"
+        },
+        "grade_type": {
+          "label": "grade_type",
+          "type": "string"
+        },
+        "grader": {
+          "label": "grader",
+          "type": "string"
+        },
+        "max_rubric_score": {
+          "label": "max_rubric_score",
+          "type": "numeric"
+        },
+        "rubric_id": {
+          "label": "rubric_id",
+          "type": "string"
+        },
+        "rubric_name": {
+          "label": "rubric_name",
+          "type": "string"
+        },
+        "rubric_score": {
+          "label": "rubric_score",
+          "type": "numeric"
+        },
+        "ticket_created_at": {
+          "label": "ticket_created_at",
+          "type": "temporal"
+        }
+      },
+      "label": "Total Scores",
+      "name": "total_scores",
+      "user_keys": [
+        {
+          "label": "Agent Email", 
+          "value": "agent_email"
+        }
+      ],
+      "default_fields": [
+        {"field_path": ["gradable_id"]},
+        {"field_path": ["rubric_score"]},
+        {"field_path": ["date_graded"]}
+      ],
+      "joins": {
+        "section_scores": {
+          "to": "section_scores",
+          "local_column": "gradable_id",
+          "foreign_column": "gradable_id"
+        }
+      }
+    }
+  }
+}
