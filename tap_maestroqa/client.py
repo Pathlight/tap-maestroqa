@@ -43,7 +43,7 @@ class MaestroQaAPI:
                     break  # No retry needed
                 time.sleep(10)
 
-        # resp.raise_for_status()
+        resp.raise_for_status()
         return resp.json()
 
     def get(self, params):
