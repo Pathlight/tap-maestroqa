@@ -53,7 +53,7 @@ class MaestroQaAPI:
 
         url = f'{self.BASE_URL}/get-export-data'
 
-        LOGGER.info(f'MaestroQA GET request to retrieve the export {params['exportId']} - {url}')
+        LOGGER.info(f'MaestroQA GET request to retrieve the export {params["exportId"]} - {url}')
 
         for num_retries in range(self.MAX_GET_ATTEMPTS):
             will_retry = num_retries < self.MAX_GET_ATTEMPTS - 1
@@ -89,13 +89,17 @@ class MaestroQaAPI:
                 if result['status'] == 'errored':
                     LOGGER.info('MaestroQA: export errored')
                     break  # no retry needed
-                elif result['status'] == 'completed':
+                elif result['status'] == 'complete':
                     LOGGER.info('MaestroQA: export completed')
                     break  # no retry needed
                 else:
-                    LOGGER.info(f'MaestroQA: export status {result["status"]}')
-            time.sleep(10)
-            LOGGER.info('MaestroQA: retrying')
+                    if will_retry:
+                        LOGGER.info(f'MaestroQA: export status = {result["status"]}, will retry', exc_info=True)
+                    else:
+                        LOGGER.info(f'MaestroQA: export did not finish, exceeded retries', exc_info=True)
+                        break
+
+            time.sleep(15)
 
         resp.raise_for_status()
         return result
