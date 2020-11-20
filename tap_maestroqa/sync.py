@@ -67,6 +67,9 @@ def get_file(client, stream, config, state=None):
     # wait for the export to complete
     export_results = client.get(export_id)
 
+    if not export_results.get('dataUrl'):
+        raise Exception('Error: MaestroQA export did not complete')
+
     return export_results['dataUrl']
 
 

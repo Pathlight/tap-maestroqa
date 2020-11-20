@@ -30,7 +30,7 @@ class MaestroQaAPI:
                 if will_retry:
                     LOGGER.info('MaestroQA: unable to get response, will retry', exc_info=True)
                 else:
-                    LOGGER.info(f'MaestroQA: unable to get response, exceeded retries', exc_info=True)
+                    raise Exception('MaestroQA: unable to get response, exceeded retries')
 
             if will_retry:
                 if resp and resp.status_code >= 500:
@@ -42,7 +42,6 @@ class MaestroQaAPI:
                 elif resp and resp.status_code == 200:
                     break  # No retry needed
                 time.sleep(10)
-                LOGGER.info('MaestroQA: retrying')
 
         resp.raise_for_status()
         return resp.json()
@@ -65,8 +64,7 @@ class MaestroQaAPI:
                 if will_retry:
                     LOGGER.info('MaestroQA: unable to get response, will retry', exc_info=True)
                 else:
-                    LOGGER.info(f'MaestroQA: unable to get response, exceeded retries', exc_info=True)
-                    break
+                    raise Exception('MaestroQA: unable to get response, exceeded retries')
 
             result = resp.json()
 
@@ -94,12 +92,12 @@ class MaestroQaAPI:
                     break  # no retry needed
                 else:
                     if will_retry:
-                        LOGGER.info(f'MaestroQA: export status = {result["status"]}, will retry', exc_info=True)
+                        LOGGER.info(f'MaestroQA: export status = {result["status"]}, will retry')
                     else:
-                        LOGGER.info(f'MaestroQA: export did not finish, exceeded retries', exc_info=True)
+                        LOGGER.info(f'MaestroQA: export did not finish, exceeded retries')
                         break
 
-            time.sleep(15)
+            time.sleep(30)
 
         resp.raise_for_status()
         return result
