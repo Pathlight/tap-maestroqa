@@ -21,7 +21,7 @@ class MaestroQaAPI:
         url = f'{self.BASE_URL}/request-raw-export'
 
         for num_retries in range(self.MAX_POST_ATTEMPTS):
-            LOGGER.info(f'MaestroQA POST request to start an export {url}')
+            LOGGER.info(f'MaestroQA POST request to start an export from {params["startDate"]} to {params["endDate"]} - {url}')
             will_retry = num_retries < self.MAX_POST_ATTEMPTS - 1
             try:
                 resp = requests.post(url, json=params, headers=self.headers)
@@ -42,6 +42,7 @@ class MaestroQaAPI:
                 elif resp and resp.status_code == 200:
                     break  # No retry needed
                 time.sleep(10)
+                LOGGER.info('MaestroQA: retrying')
 
         resp.raise_for_status()
         return resp.json()
@@ -52,7 +53,7 @@ class MaestroQaAPI:
 
         url = f'{self.BASE_URL}/get-export-data'
 
-        LOGGER.info(f'MaestroQA GET request to retrieve the export {url}')
+        LOGGER.info(f'MaestroQA GET request to retrieve the export {params['exportId']} - {url}')
 
         for num_retries in range(self.MAX_GET_ATTEMPTS):
             will_retry = num_retries < self.MAX_GET_ATTEMPTS - 1
@@ -89,8 +90,12 @@ class MaestroQaAPI:
                     LOGGER.info('MaestroQA: export errored')
                     break  # no retry needed
                 elif result['status'] == 'completed':
+                    LOGGER.info('MaestroQA: export completed')
                     break  # no retry needed
+                else:
+                    LOGGER.info(f'MaestroQA: export status {result["status"]}')
             time.sleep(10)
+            LOGGER.info('MaestroQA: retrying')
 
-        # resp.raise_for_status()
+        resp.raise_for_status()
         return result
