@@ -16,7 +16,11 @@ DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 def transform_date(datestr):
     if datestr.startswith('='):
-        date_obj = datetime.datetime.strptime(datestr, '="%Y-%m-%d %H:%M:%S.%f"').replace(tzinfo=pytz.UTC)
+        # datestr might not include floating numbers in seconds, raising ValueError.
+        try:
+            date_obj = datetime.datetime.strptime(datestr, '="%Y-%m-%d %H:%M:%S.%f"').replace(tzinfo=pytz.UTC)
+        except ValueError:
+            date_obj = datetime.datetime.strptime(datestr, '="%Y-%m-%d %H:%M:%S"').replace(tzinfo=pytz.UTC)
     else:
         date_obj = strptime_to_utc(datestr)
     # reformat to use RFC3339 format
