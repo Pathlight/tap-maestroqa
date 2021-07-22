@@ -16,8 +16,8 @@ DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 def transform_date(datestr):
     if datestr.startswith('='):
-        # datestr might not include floating numbers in the seconds, raising ValueError. 
-        try: 
+        # datestr might not include floating numbers in seconds, raising ValueError.
+        try:
             date_obj = datetime.datetime.strptime(datestr, '="%Y-%m-%d %H:%M:%S.%f"').replace(tzinfo=pytz.UTC)
         except ValueError:
             date_obj = datetime.datetime.strptime(datestr, '="%Y-%m-%d %H:%M:%S"').replace(tzinfo=pytz.UTC)
