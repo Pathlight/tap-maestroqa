@@ -101,6 +101,7 @@ def process_file(stream, state, config, file_url):
             bookmark = state['bookmarks'][stream.tap_stream_id]['date_graded']
         else:
             bookmark = config['start_date']
+            state = {}
 
         for row in reader:
             record = {}
