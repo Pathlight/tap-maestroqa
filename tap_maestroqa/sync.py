@@ -54,10 +54,7 @@ def transform_value(key, value):
 
 def get_file(client, stream, config, state=None):
 
-    if state:
-        start_date = state['bookmarks'][stream.tap_stream_id]['date_graded']
-    else:
-        start_date = config['start_date']
+    start_date = singer.get_bookmark(state, stream.tap_stream_id, 'date_graded') or config['start_date']
     end_date = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
     params = {
         'startDate': start_date,
@@ -97,10 +94,7 @@ def process_file(stream, state, config, file_url):
             key_properties=stream.key_properties,
         )
 
-        if state:
-            bookmark = state['bookmarks'][stream.tap_stream_id]['date_graded']
-        else:
-            bookmark = config['start_date']
+        bookmark = singer.get_bookmark(state, stream.tap_stream_id, 'date_graded') or config['start_date']
 
         for row in reader:
             record = {}
@@ -111,7 +105,7 @@ def process_file(stream, state, config, file_url):
                 singer.write_record(stream.tap_stream_id, record)
                 new_bookmark = transform_date(row['date_graded'])
                 if new_bookmark > bookmark:
-                    state['bookmarks'][stream.tap_stream_id]['date_graded'] = new_bookmark
+                    state = singer.write_bookmark(state, stream.tap_stream_id, 'date_graded', new_bookmark)
                     singer.write_state(state)
 
 

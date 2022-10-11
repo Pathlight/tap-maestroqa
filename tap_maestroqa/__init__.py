@@ -9,8 +9,7 @@ from singer.schema import Schema
 from .sync import sync
 
 
-REQUIRED_CONFIG_KEYS = ['api_token']
-STATE = {}
+REQUIRED_CONFIG_KEYS = ['api_token', 'start_date']
 LOGGER = singer.get_logger()
 
 
